@@ -1,4 +1,3 @@
-
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -64,7 +63,6 @@ app.get('/:id', (req, res) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>${title}</title>
         <!-- Open Graph Meta Tags -->
-	<meta property="fb:app_id" content="4108838539203518">
         <meta property="og:title" content="${title}">
         <meta property="og:description" content="${description}">
         <meta property="og:image" content="${thumbnail}">
@@ -85,6 +83,8 @@ app.get('/:id', (req, res) => {
     `);
   } else {
     res.status(404).send('<h2>Link not found</h2>');
+
+
   }
 });
 

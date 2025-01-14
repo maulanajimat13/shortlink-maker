@@ -1,9 +1,10 @@
-
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const app = express();
+const https = require('https');
+const http = require('http');
 
+const app = express();
 const DATA_FILE = path.join(__dirname, 'data.json'); // Lokasi file data.json
 
 // Middleware
@@ -64,17 +65,11 @@ app.get('/:id', (req, res) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>${title}</title>
         <!-- Open Graph Meta Tags -->
-	<meta property="fb:app_id" content="4108838539203518">
         <meta property="og:title" content="${title}">
         <meta property="og:description" content="${description}">
         <meta property="og:image" content="${thumbnail}">
         <meta property="og:url" content="${req.protocol}://${req.get('host')}/${id}">
         <meta property="og:type" content="website">
-        <!-- Optional: Twitter Meta Tags -->
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="${title}">
-        <meta name="twitter:description" content="${description}">
-        <meta name="twitter:image" content="${thumbnail}">
         <!-- Redirect Script -->
         <script>window.location.href = "${url}";</script>
       </head>
@@ -88,5 +83,23 @@ app.get('/:id', (req, res) => {
   }
 });
 
-// Jalankan server di port 3000
-app.listen(3000, () => console.log('Server running on http://localhost:3000'));
+// Konfigurasi HTTPS
+const sslOptions = {
+  key: fs.readFileSync('/etc/ssl/private/private.key'),       // Ganti dengan path ke file private key
+  cert: fs.readFileSync('/etc/ssl/certificate.crt'), // Ganti dengan path ke file sertifikat SSL
+  ca: fs.readFileSync('/etc/ssl/ca_bundle.crt'),           // Opsional, jika ada CA
+};
+
+// Jalankan server HTTPS
+https.createServer(sslOptions, app).listen(443, () => {
+  console.log('HTTPS server running on https://localhost');
+});
+
+// Redirect HTTP ke HTTPS (Opsional)
+http.createServer((req, res) => {
+  res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
+  res.end();
+}).listen(80, () => {
+  console.log('HTTP to HTTPS redirect running on http://localhost');
+});
+

